@@ -14,4 +14,4 @@
 
 #coffee bot.coffee
 #node bot.js $1
-java target\classes\fr\ribesg\brainjar\battleshipsbot\Bot $1
+java target/classes/fr/ribesg/brainjar/battleshipsbot/Bot $1
