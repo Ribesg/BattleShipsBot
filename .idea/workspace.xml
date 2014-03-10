@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d5b83a6b-f65a-4148-b02a-3fe82b3db0db" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pom.xml" afterPath="$PROJECT_DIR$/pom.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="BattleShipsBot.iws" />
@@ -665,7 +664,7 @@
       <created>1394475686539</created>
       <updated>1394475686539</updated>
       <workItem from="1394475689642" duration="480000" />
-      <workItem from="1394476170484" duration="2486000" />
+      <workItem from="1394476170484" duration="2501000" />
     </task>
     <task id="LOCAL-00001" summary="Yay">
       <created>1394478279830</created>
@@ -675,11 +674,15 @@
       <created>1394478375963</created>
       <updated>1394478375963</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="Fix pom">
+      <created>1394478674530</created>
+      <updated>1394478674530</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="2966000" />
+    <option name="totallyTimeSpent" value="2981000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1066" extended-state="6" />
@@ -727,7 +730,8 @@
     </option>
     <MESSAGE value="Yay" />
     <MESSAGE value="Let's try the jar" />
-    <option name="LAST_COMMIT_MESSAGE" value="Let's try the jar" />
+    <MESSAGE value="Fix pom" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fix pom" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
