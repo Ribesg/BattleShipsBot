@@ -1,10 +1,9 @@
 package fr.ribesg.brainjar.battleshipsbot;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-
+import java.util.List;
 import java.util.Random;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
 public class Bot {
 
@@ -16,42 +15,52 @@ public class Bot {
 	private static final String ORIENTATION = "orientation";
 	private static final String VERTICAL    = "vertical";
 	private static final String HORIZONTAL  = "horizontal";
-
-	private static final String HIT    = "hit";
-	private static final String MISSED = "missed";
-
+	
 	private static final Random RANDOM = new Random();
 
+	private class State {
+		public String cmd;
+		public List<String>hit;
+		public List<String>missed;
+		public List<String>moves;
+		public List<String>destroyed;
+	}
+
 	public static void main(final String[] args) {
-		if (args[0].equals("init")) {
-			System.out.println(getConfig());
-		} else {
-			final JsonObject input = (JsonObject) new JsonParser().parse(merge(args));
-			final JsonArray hitArray = input.getAsJsonArray(HIT);
-			final JsonArray missedArray = input.getAsJsonArray(MISSED);
-
-			boolean ok;
-			String move;
-			do {
-				move = getRandomMove();
-				ok = true;
-				for (final JsonElement e : hitArray) {
-					if (move.equals(e.getAsString())) {
-						ok = false;
-						break;
-					}
-				}
-				if (ok) {
-					for (final JsonElement e : missedArray) {
-						if (move.equals(e.getAsString())) {
-							ok = false;
-							break;
-						}
-					}
-				}
-			} while (!ok);
-
-			System.out.println("{move:'" + move + "'}");
+		
+		if (args.length > 0){
+			Gson gson = new Gson();
+			State state = gson.fromJson(args[0], State.class);
+	
+			if (state.cmd.equals("init")) {
+				System.out.println(getConfig());
+			} else {
+				
+				boolean ok;
+				String move = "00";
+				do {
+				 	move = getRandomMove();
+				 	ok = true;
+				 	for (final String e : state.hit) {
+				 		if (move.equals(e)) {
+				 			ok = false;
+				 			break;
+				 		}
+				 	}
+				 	if (ok) {
+				 		for (final String e : state.missed) {
+				 			if (move.equals(e)) {
+				 				ok = false;
+				 				break;
+				 			}
+				 		}
+				 	}
+				} while (!ok);
+	
+				System.out.println("{\"move\":\"" + move + "\"}");
+			}
+		}else{
+			System.out.println("{\"move\":\"WTF?\"}");
 		}
 	}
 
@@ -83,16 +92,5 @@ public class Bot {
 
 	private static String getRandomMove() {
 		return String.format("%d%d", RANDOM.nextInt(8), RANDOM.nextInt(8));
-	}
-
-	private static String merge(final String[] strings) {
-		if (strings == null || strings.length < 1) {
-			throw new IllegalArgumentException("No.");
-		}
-		final StringBuilder builder = new StringBuilder(strings[0]);
-		for (int i = 1; i < strings.length; i++) {
-			builder.append(' ').append(strings[i]);
-		}
-		return builder.toString();
 	}
 }

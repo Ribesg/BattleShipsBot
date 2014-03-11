@@ -1,5 +1,6 @@
 package fr.ribesg.brainjar.battleshipsbot;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import org.junit.Assert;
@@ -26,13 +27,17 @@ public class BotTest {
 
 		input.add("hit", hitArray);
 		input.add("missed", missedArray);
+		
+		JsonElement move = new JsonPrimitive("move");
+		input.add("cmd", move);
 
 		this.input = input.toString().split("\\s");
 	}
 
 	@Test
 	public void testMain() {
-		Bot.main(new String[] {"init"});
+		String move[] = {"{\"cmd\":\"init\"}"};
+		Bot.main(move);
 		Bot.main(input);
 	}
 }
