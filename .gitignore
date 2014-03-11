@@ -16,3 +16,8 @@ node_modules
 
 .local.raw.github.com.brainjar.battleships.coffee
 .local.raw.github.com.brainjar.battleships-bot.coffee
+
+.idea/*
+dependency-reduced-pom.xml
+target/*
+!target/BattleShipsBot-42.jar
