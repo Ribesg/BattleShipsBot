@@ -1,96 +1,102 @@
 package fr.ribesg.brainjar.battleshipsbot;
-import java.util.List;
-import java.util.Random;
-
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import fr.ribesg.brainjar.battleshipsbot.ship.Ship;
+
+import java.util.Random;
+import java.util.Set;
 
 public class Bot {
 
-	private static final String SHIP_2      = "2";
-	private static final String SHIP_3      = "3";
-	private static final String SHIP_4      = "4";
-	private static final String SHIP_5      = "5";
-	private static final String POINT       = "point";
-	private static final String ORIENTATION = "orientation";
-	private static final String VERTICAL    = "vertical";
-	private static final String HORIZONTAL  = "horizontal";
-	
 	private static final Random RANDOM = new Random();
 
+	/**
+	 * Represents a Battleships game state
+	 */
 	private class State {
-		public String cmd;
-		public List<String>hit;
-		public List<String>missed;
-		public List<String>moves;
-		public List<String>destroyed;
+
+		public String      cmd;
+		public Set<String> hit;
+		public Set<String> missed;
+		public Set<String> moves;
+		public Set<String> destroyed;
 	}
 
 	public static void main(final String[] args) {
-		
-		if (args.length > 0){
-			Gson gson = new Gson();
-			State state = gson.fromJson(args[0], State.class);
-	
+		final State state = parseState(args);
+
+		if (state != null) {
 			if (state.cmd.equals("init")) {
 				System.out.println(getConfig());
 			} else {
-				
-				boolean ok;
-				String move = "00";
-				do {
-				 	move = getRandomMove();
-				 	ok = true;
-				 	for (final String e : state.hit) {
-				 		if (move.equals(e)) {
-				 			ok = false;
-				 			break;
-				 		}
-				 	}
-				 	if (ok) {
-				 		for (final String e : state.missed) {
-				 			if (move.equals(e)) {
-				 				ok = false;
-				 				break;
-				 			}
-				 		}
-				 	}
-				} while (!ok);
-	
+				final String move = getPossibleMove(state);
 				System.out.println("{\"move\":\"" + move + "\"}");
 			}
-		}else{
+		} else {
 			System.out.println("{\"move\":\"WTF?\"}");
 		}
 	}
 
-	private static String getConfig() {
+	static State parseState(final String[] args) {
+		if (args.length == 0) {
+			return null;
+		}
+		return new Gson().fromJson(args[0], State.class);
+	}
+
+	static String getConfig() {
 		final JsonObject result = new JsonObject();
 
-		final JsonObject ship2 = new JsonObject();
-		ship2.addProperty(POINT, "11");
-		ship2.addProperty(ORIENTATION, VERTICAL);
-		result.add(SHIP_2, ship2);
+		final Ship ship5;
+		if (RANDOM.nextBoolean()) {
+			ship5 = new Ship(5, getRandomMove(4, 8), true);
+		} else {
+			ship5 = new Ship(5, getRandomMove(8, 4), false);
+		}
+		result.add("5", ship5.toJsonObject());
 
-		final JsonObject ship3 = new JsonObject();
-		ship3.addProperty(POINT, "31");
-		ship3.addProperty(ORIENTATION, HORIZONTAL);
-		result.add(SHIP_3, ship3);
+		Ship ship4;
+		do {
+			if (RANDOM.nextBoolean()) {
+				ship4 = new Ship(4, getRandomMove(5, 8), true);
+			} else {
+				ship4 = new Ship(4, getRandomMove(8, 5), false);
+			}
+		} while (ship4.collides(ship5));
+		result.add("4", ship4.toJsonObject());
 
-		final JsonObject ship4 = new JsonObject();
-		ship4.addProperty(POINT, "74");
-		ship4.addProperty(ORIENTATION, VERTICAL);
-		result.add(SHIP_4, ship4);
+		Ship ship3;
+		do {
+			if (RANDOM.nextBoolean()) {
+				ship3 = new Ship(3, getRandomMove(6, 8), true);
+			} else {
+				ship3 = new Ship(3, getRandomMove(8, 6), false);
+			}
+		} while (ship3.collides(ship5) || ship3.collides(ship4));
+		result.add("3", ship3.toJsonObject());
 
-		final JsonObject ship5 = new JsonObject();
-		ship5.addProperty(POINT, "07");
-		ship5.addProperty(ORIENTATION, HORIZONTAL);
-		result.add(SHIP_5, ship5);
+		Ship ship2;
+		do {
+			if (RANDOM.nextBoolean()) {
+				ship2 = new Ship(2, getRandomMove(7, 8), true);
+			} else {
+				ship2 = new Ship(2, getRandomMove(8, 7), false);
+			}
+		} while (ship2.collides(ship5) || ship2.collides(ship4) || ship2.collides(ship3));
+		result.add("2", ship2.toJsonObject());
 
 		return result.toString();
 	}
 
-	private static String getRandomMove() {
-		return String.format("%d%d", RANDOM.nextInt(8), RANDOM.nextInt(8));
+	static String getPossibleMove(final State state) {
+		String move;
+		do {
+			move = getRandomMove(8, 8);
+		} while (!state.missed.contains(move) && !state.hit.contains(move));
+		return move;
+	}
+
+	static String getRandomMove(final int xBound, final int yBound) {
+		return String.format("%d%d", RANDOM.nextInt(xBound), RANDOM.nextInt(yBound));
 	}
 }
