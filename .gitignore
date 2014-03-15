@@ -19,5 +19,6 @@ node_modules
 
 .idea/*
 dependency-reduced-pom.xml
+*.iml
 target/*
 !target/BattleShipsBot-42.jar
