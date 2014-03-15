@@ -108,17 +108,24 @@ public class Bot {
 				}
 			}
 		}
-		final String move = getDiagonalMove(state);
+		final String move = getUsualMove(state);
 		return move == null ? getAnyInterestingPossibleMove(state) : move;
 	}
 
-	private final static String[] diagonalMoves = new String[] {
+	private final static String[] usualMoves = new String[] {
+			// Diagonal moves
 			"00","11","22","33","44","55","66","77",
-			"70","61","52","43","34","25","16","07"
+			"70","61","52","43","34","25","16","07",
+
+			// Others
+			"31","41",
+			"13","14",
+			"36","46",
+			"63","64"
 	};
 
-	static String getDiagonalMove(final State state) {
-		for (final String diagonalMove : diagonalMoves) {
+	static String getUsualMove(final State state) {
+		for (final String diagonalMove : usualMoves) {
 			if (isMovePossible(state, diagonalMove)) {
 				return diagonalMove;
 			}
