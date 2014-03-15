@@ -108,7 +108,37 @@ public class Bot {
 				}
 			}
 		}
-		return getAnyPossibleMove(state);
+		return getAnyInterestingPossibleMove(state);
+	}
+
+	static String getAnyInterestingPossibleMove(final State state) {
+		int triesCount = 0;
+		String move = getAnyPossibleMove(state);
+
+		String bestMove = move;
+		int bestMovePossibleNeighbours = -1;
+
+		while (triesCount++ < 50 && bestMovePossibleNeighbours < 4) {
+			final int x = Integer.parseInt(move.substring(1, 2));
+			final int y = Integer.parseInt(move.substring(2, 3));
+			int i = 0;
+			final List<String> neighborMoves = new ArrayList<>(4);
+			if (x > 0) { neighborMoves.add((x - 1) + "" + y); } else { i++; }
+			if (x < 7) { neighborMoves.add((x + 1) + "" + y); } else { i++; }
+			if (y > 0) { neighborMoves.add(x + "" + (y - 1)); } else { i++; }
+			if (y < 7) { neighborMoves.add(x + "" + (y + 1)); } else { i++; }
+			for (final String neighborMove : neighborMoves) {
+				if (isMovePossible(state, neighborMove)) {
+					i++;
+				}
+			}
+			if (i > bestMovePossibleNeighbours) {
+				bestMove = move;
+				bestMovePossibleNeighbours = i;
+			}
+			move = getAnyPossibleMove(state);
+		}
+		return bestMove;
 	}
 
 	static String getAnyPossibleMove(final State state) {
