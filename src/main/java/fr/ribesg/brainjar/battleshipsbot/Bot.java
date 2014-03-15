@@ -10,7 +10,7 @@ import java.util.Set;
 
 public class Bot {
 
-	private static final Random RANDOM = new Random();
+	public static final Random RANDOM = new Random();
 
 	/**
 	 * Represents a Battleships game state
@@ -39,58 +39,62 @@ public class Bot {
 		}
 	}
 
-	static State parseState(final String[] args) {
+	public static State parseState(final String[] args) {
 		if (args.length == 0) {
 			return null;
 		}
 		return new Gson().fromJson(args[0], State.class);
 	}
 
-	static String getConfig() {
+	public static String getConfig() {
+
+		Ship ship2, ship3, ship4, ship5;
+		boolean isNotOptimal;
+		int i = 15;
+		do {
+			if (RANDOM.nextBoolean()) {
+				ship5 = new Ship(5, getRandomMove(4, 8), true);
+			} else {
+				ship5 = new Ship(5, getRandomMove(8, 4), false);
+			}
+
+			do {
+				if (RANDOM.nextBoolean()) {
+					ship4 = new Ship(4, getRandomMove(5, 8), true);
+				} else {
+					ship4 = new Ship(4, getRandomMove(8, 5), false);
+				}
+			} while (ship4.collides(ship5));
+
+			do {
+				if (RANDOM.nextBoolean()) {
+					ship3 = new Ship(3, getRandomMove(6, 8), true);
+				} else {
+					ship3 = new Ship(3, getRandomMove(8, 6), false);
+				}
+			} while (ship3.collides(ship5) || ship3.collides(ship4));
+
+			do {
+				if (RANDOM.nextBoolean()) {
+					ship2 = new Ship(2, getRandomMove(7, 8), true);
+				} else {
+					ship2 = new Ship(2, getRandomMove(8, 7), false);
+				}
+			} while (ship2.collides(ship5) || ship2.collides(ship4) || ship2.collides(ship3));
+
+			isNotOptimal = ship2.touches(ship3) || ship2.touches(ship4) || ship2.touches(ship5) ||
+			               ship3.touches(ship4) || ship3.touches(ship5) || ship4.touches(ship5);
+		} while (isNotOptimal && i-- > 0);
+
 		final JsonObject result = new JsonObject();
-
-		final Ship ship5;
-		if (RANDOM.nextBoolean()) {
-			ship5 = new Ship(5, getRandomMove(4, 8), true);
-		} else {
-			ship5 = new Ship(5, getRandomMove(8, 4), false);
-		}
-		result.add("5", ship5.toJsonObject());
-
-		Ship ship4;
-		do {
-			if (RANDOM.nextBoolean()) {
-				ship4 = new Ship(4, getRandomMove(5, 8), true);
-			} else {
-				ship4 = new Ship(4, getRandomMove(8, 5), false);
-			}
-		} while (ship4.collides(ship5));
-		result.add("4", ship4.toJsonObject());
-
-		Ship ship3;
-		do {
-			if (RANDOM.nextBoolean()) {
-				ship3 = new Ship(3, getRandomMove(6, 8), true);
-			} else {
-				ship3 = new Ship(3, getRandomMove(8, 6), false);
-			}
-		} while (ship3.collides(ship5) || ship3.collides(ship4));
-		result.add("3", ship3.toJsonObject());
-
-		Ship ship2;
-		do {
-			if (RANDOM.nextBoolean()) {
-				ship2 = new Ship(2, getRandomMove(7, 8), true);
-			} else {
-				ship2 = new Ship(2, getRandomMove(8, 7), false);
-			}
-		} while (ship2.collides(ship5) || ship2.collides(ship4) || ship2.collides(ship3));
 		result.add("2", ship2.toJsonObject());
-
+		result.add("3", ship3.toJsonObject());
+		result.add("4", ship4.toJsonObject());
+		result.add("5", ship5.toJsonObject());
 		return result.toString();
 	}
 
-	static String getNextMove(final State state) {
+	public static String getNextMove(final State state) {
 		for (int i = state.moves.size() - 1; i >= 0; i--) {
 			final String move = state.moves.get(i);
 			if (move.charAt(0) == '0' && move.charAt(3) == '3') {
@@ -112,19 +116,37 @@ public class Bot {
 		return move == null ? getAnyInterestingPossibleMove(state) : move;
 	}
 
-	private final static String[] usualMoves = new String[] {
+	public final static String[] usualMoves = new String[] {
 			// Diagonal moves
-			"00","11","22","33","44","55","66","77",
-			"70","61","52","43","34","25","16","07",
+			"00",
+			"11",
+			"22",
+			"33",
+			"44",
+			"55",
+			"66",
+			"77",
+			"70",
+			"61",
+			"52",
+			"43",
+			"34",
+			"25",
+			"16",
+			"07",
 
 			// Others
-			"31","41",
-			"13","14",
-			"36","46",
-			"63","64"
+			"31",
+			"41",
+			"13",
+			"14",
+			"36",
+			"46",
+			"63",
+			"64"
 	};
 
-	static String getUsualMove(final State state) {
+	public static String getUsualMove(final State state) {
 		for (final String diagonalMove : usualMoves) {
 			if (isMovePossible(state, diagonalMove)) {
 				return diagonalMove;
@@ -133,7 +155,7 @@ public class Bot {
 		return null;
 	}
 
-	static String getAnyInterestingPossibleMove(final State state) {
+	public static String getAnyInterestingPossibleMove(final State state) {
 		int triesCount = 0;
 		String move = getRandomPossibleMove(state);
 
@@ -163,7 +185,7 @@ public class Bot {
 		return bestMove;
 	}
 
-	static String getRandomPossibleMove(final State state) {
+	public static String getRandomPossibleMove(final State state) {
 		String move;
 		do {
 			move = getRandomMove(8, 8);
@@ -171,11 +193,11 @@ public class Bot {
 		return move;
 	}
 
-	static boolean isMovePossible(final State state, final String move) {
+	public static boolean isMovePossible(final State state, final String move) {
 		return !state.missed.contains(move) && !state.hit.contains(move);
 	}
 
-	static String getRandomMove(final int xBound, final int yBound) {
+	public static String getRandomMove(final int xBound, final int yBound) {
 		return String.format("%d%d", RANDOM.nextInt(xBound), RANDOM.nextInt(yBound));
 	}
 }
