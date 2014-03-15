@@ -119,10 +119,20 @@ public class Bot {
 	}
 
 	static boolean isMovePossible(final State state, final String move) {
-		return !state.missed.contains(move) && !state.hit.contains(move);
+		final int x = getX(move);
+		final int y = getY(move);
+		return !state.missed.contains(move) && !state.hit.contains(move) && x >= 0 && x < 8 && y >= 0 && y < 8;
 	}
 
 	static String getRandomMove(final int xBound, final int yBound) {
 		return String.format("%d%d", RANDOM.nextInt(xBound), RANDOM.nextInt(yBound));
+	}
+
+	static int getX(final String move) {
+		return Integer.parseInt(move.substring(0, 1));
+	}
+
+	static int getY(final String move) {
+		return Integer.parseInt(move.substring(1));
 	}
 }
