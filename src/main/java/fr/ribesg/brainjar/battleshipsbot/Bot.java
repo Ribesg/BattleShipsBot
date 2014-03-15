@@ -3,6 +3,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import fr.ribesg.brainjar.battleshipsbot.ship.Ship;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
@@ -95,12 +96,12 @@ public class Bot {
 			if (move.charAt(0) == '0' && move.charAt(3) == '3') {
 				final int x = Integer.parseInt(move.substring(1, 2));
 				final int y = Integer.parseInt(move.substring(2, 3));
-				for (final String nextMove : new String[] {
-						(x - 1) + "" + y,
-						(x + 1) + "" + y,
-						x + "" + (y - 1),
-						x + "" + (y + 1)
-				}) {
+				final List<String> moves = new ArrayList<>(4);
+				if (x > 0) { moves.add((x - 1) + "" + y); }
+				if (x < 7) { moves.add((x + 1) + "" + y); }
+				if (y > 0) { moves.add(x + "" + (y - 1)); }
+				if (y < 7) { moves.add(x + "" + (y + 1)); }
+				for (final String nextMove : moves) {
 					if (isMovePossible(state, nextMove)) {
 						return nextMove;
 					}
@@ -119,20 +120,10 @@ public class Bot {
 	}
 
 	static boolean isMovePossible(final State state, final String move) {
-		final int x = getX(move);
-		final int y = getY(move);
-		return !state.missed.contains(move) && !state.hit.contains(move) && x >= 0 && x < 8 && y >= 0 && y < 8;
+		return !state.missed.contains(move) && !state.hit.contains(move);
 	}
 
 	static String getRandomMove(final int xBound, final int yBound) {
 		return String.format("%d%d", RANDOM.nextInt(xBound), RANDOM.nextInt(yBound));
-	}
-
-	static int getX(final String move) {
-		return Integer.parseInt(move.substring(0, 1));
-	}
-
-	static int getY(final String move) {
-		return Integer.parseInt(move.substring(1));
 	}
 }
