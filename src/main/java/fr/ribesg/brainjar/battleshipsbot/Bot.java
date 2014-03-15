@@ -108,12 +108,27 @@ public class Bot {
 				}
 			}
 		}
-		return getAnyInterestingPossibleMove(state);
+		final String move = getDiagonalMove(state);
+		return move == null ? getAnyInterestingPossibleMove(state) : move;
+	}
+
+	private final static String[] diagonalMoves = new String[] {
+			"00","11","22","33","44","55","66","77",
+			"70","61","52","43","34","25","16","07"
+	};
+
+	static String getDiagonalMove(final State state) {
+		for (final String diagonalMove : diagonalMoves) {
+			if (isMovePossible(state, diagonalMove)) {
+				return diagonalMove;
+			}
+		}
+		return null;
 	}
 
 	static String getAnyInterestingPossibleMove(final State state) {
 		int triesCount = 0;
-		String move = getAnyPossibleMove(state);
+		String move = getRandomPossibleMove(state);
 
 		String bestMove = move;
 		int bestMovePossibleNeighbours = -1;
@@ -136,12 +151,12 @@ public class Bot {
 				bestMove = move;
 				bestMovePossibleNeighbours = i;
 			}
-			move = getAnyPossibleMove(state);
+			move = getRandomPossibleMove(state);
 		}
 		return bestMove;
 	}
 
-	static String getAnyPossibleMove(final State state) {
+	static String getRandomPossibleMove(final State state) {
 		String move;
 		do {
 			move = getRandomMove(8, 8);
