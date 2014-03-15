@@ -147,11 +147,22 @@ public class Bot {
 	};
 
 	public static String getUsualMove(final State state) {
+		// Try to take a random one
+		for (int i = 0; i < 15; i++) {
+			final String move = usualMoves[RANDOM.nextInt(usualMoves.length)];
+			if (isMovePossible(state, move)) {
+				return move;
+			}
+		}
+
+		// If it fails to much, try to take the first one available
 		for (final String diagonalMove : usualMoves) {
 			if (isMovePossible(state, diagonalMove)) {
 				return diagonalMove;
 			}
 		}
+
+		// All of them have been played
 		return null;
 	}
 
