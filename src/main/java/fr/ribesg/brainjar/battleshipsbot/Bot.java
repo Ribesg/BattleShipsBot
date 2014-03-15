@@ -117,40 +117,18 @@ public class Bot {
 		return move == null ? getAnyInterestingPossibleMove(state) : move;
 	}
 
-	public final static String[] usualMoves = new String[] {
-			// Diagonal moves
-			"00",
-			"11",
-			"22",
-			"33",
-			"44",
-			"55",
-			"66",
-			"77",
-			"70",
-			"61",
-			"52",
-			"43",
-			"34",
-			"25",
-			"16",
-			"07",
-
-			// Others
-			"31",
-			"41",
-			"13",
-			"14",
-			"36",
-			"46",
-			"63",
-			"64"
-	};
+	public final static List<String> usualMoves = new ArrayList<String>() {{
+		for (int x = 0; x < 8; x++) {
+			for (int y = x % 2 == 0 ? 1 : 0; y < 8; y += 2) {
+				this.add(x + "" + y);
+			}
+		}
+	}};
 
 	public static String getUsualMove(final State state) {
 		// Try to take a random one
 		for (int i = 0; i < 15; i++) {
-			final String move = usualMoves[RANDOM.nextInt(usualMoves.length)];
+			final String move = usualMoves.get(RANDOM.nextInt(usualMoves.size()));
 			if (isMovePossible(state, move)) {
 				return move;
 			}
