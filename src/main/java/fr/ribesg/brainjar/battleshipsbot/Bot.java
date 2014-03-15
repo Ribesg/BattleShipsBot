@@ -92,7 +92,7 @@ public class Bot {
 		String move;
 		do {
 			move = getRandomMove(8, 8);
-		} while (!state.missed.contains(move) && !state.hit.contains(move));
+		} while (state.missed.contains(move) || state.hit.contains(move));
 		return move;
 	}
 
