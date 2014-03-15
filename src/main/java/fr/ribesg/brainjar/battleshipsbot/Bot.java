@@ -50,7 +50,7 @@ public class Bot {
 
 		Ship ship2, ship3, ship4, ship5;
 		boolean isNotOptimal;
-		int i = 15;
+		int i = 50;
 		do {
 			if (RANDOM.nextBoolean()) {
 				ship5 = new Ship(5, getRandomMove(4, 8), true);
