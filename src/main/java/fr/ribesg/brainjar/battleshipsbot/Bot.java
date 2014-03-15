@@ -119,8 +119,8 @@ public class Bot {
 		int bestMovePossibleNeighbours = -1;
 
 		while (triesCount++ < 50 && bestMovePossibleNeighbours < 4) {
-			final int x = Integer.parseInt(move.substring(1, 2));
-			final int y = Integer.parseInt(move.substring(2, 3));
+			final int x = Integer.parseInt(move.substring(0, 1));
+			final int y = Integer.parseInt(move.substring(1, 2));
 			int i = 0;
 			final List<String> neighborMoves = new ArrayList<>(4);
 			if (x > 0) { neighborMoves.add((x - 1) + "" + y); } else { i++; }
