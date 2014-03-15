@@ -91,7 +91,7 @@ public class Bot {
 	}
 
 	static String getNextMove(final State state) {
-		for (int i = state.moves.size() - 1; i > state.moves.size() - 12 && i >= 0; i--) {
+		for (int i = state.moves.size() - 1; i >= 0; i--) {
 			final String move = state.moves.get(i);
 			if (move.charAt(0) == '0' && move.charAt(3) == '3') {
 				final int x = Integer.parseInt(move.substring(1, 2));
