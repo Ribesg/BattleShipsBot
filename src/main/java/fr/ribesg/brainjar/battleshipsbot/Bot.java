@@ -3,6 +3,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import fr.ribesg.brainjar.battleshipsbot.ship.Ship;
 
+import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
@@ -15,11 +16,11 @@ public class Bot {
 	 */
 	private class State {
 
-		public String      cmd;
-		public Set<String> hit;
-		public Set<String> missed;
-		public Set<String> moves;
-		public Set<String> destroyed;
+		public String       cmd;
+		public Set<String>  hit;
+		public Set<String>  missed;
+		public List<String> moves;
+		public List<String> destroyed;
 	}
 
 	public static void main(final String[] args) {
@@ -29,7 +30,7 @@ public class Bot {
 			if (state.cmd.equals("init")) {
 				System.out.println(getConfig());
 			} else {
-				final String move = getPossibleMove(state);
+				final String move = getNextMove(state);
 				System.out.println("{\"move\":\"" + move + "\"}");
 			}
 		} else {
@@ -88,12 +89,37 @@ public class Bot {
 		return result.toString();
 	}
 
-	static String getPossibleMove(final State state) {
+	static String getNextMove(final State state) {
+		for (int i = state.moves.size() - 1; i > state.moves.size() - 12; i--) {
+			final String move = state.moves.get(i);
+			if (move.charAt(0) == '0' && move.charAt(3) == '3') {
+				final int x = Integer.parseInt(move.substring(1, 2));
+				final int y = Integer.parseInt(move.substring(2, 3));
+				for (final String nextMove : new String[] {
+						(x - 1) + "" + y,
+						(x + 1) + "" + y,
+						x + "" + (y - 1),
+						x + "" + (y + 1)
+				}) {
+					if (isMovePossible(state, nextMove)) {
+						return nextMove;
+					}
+				}
+			}
+		}
+		return getAnyPossibleMove(state);
+	}
+
+	static String getAnyPossibleMove(final State state) {
 		String move;
 		do {
 			move = getRandomMove(8, 8);
-		} while (state.missed.contains(move) || state.hit.contains(move));
+		} while (!isMovePossible(state, move));
 		return move;
+	}
+
+	static boolean isMovePossible(final State state, final String move) {
+		return !state.missed.contains(move) && !state.hit.contains(move);
 	}
 
 	static String getRandomMove(final int xBound, final int yBound) {
