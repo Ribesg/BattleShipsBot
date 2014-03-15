@@ -22,6 +22,7 @@ public class Bot {
 		public Set<String>  missed;
 		public List<String> moves;
 		public List<String> destroyed;
+		public char         you;
 	}
 
 	public static void main(final String[] args) {
@@ -97,7 +98,7 @@ public class Bot {
 	public static String getNextMove(final State state) {
 		for (int i = state.moves.size() - 1; i >= 0; i--) {
 			final String move = state.moves.get(i);
-			if (move.charAt(0) == '0' && move.charAt(3) == '3') {
+			if (move.charAt(0) == state.you && move.charAt(3) == '3') {
 				final int x = Integer.parseInt(move.substring(1, 2));
 				final int y = Integer.parseInt(move.substring(2, 3));
 				final List<String> moves = new ArrayList<>(4);
